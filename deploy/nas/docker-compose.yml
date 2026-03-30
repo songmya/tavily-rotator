@@ -1,6 +1,6 @@
 services:
   nas-tavily-gateway:
-    image: docker.io/${DOCKERHUB_USERNAME}/nas-tavily-gateway:${GATEWAY_IMAGE_TAG}
+    image: docker.io/songmy94/nas-tavily-gateway:latest
     container_name: nas-tavily-gateway
     env_file:
       - .env
