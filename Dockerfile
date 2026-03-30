@@ -6,4 +6,11 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["uvicorn", "mcp_server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD [
+  "uvicorn",
+  "mcp_server:app",
+  "--host", "0.0.0.0",
+  "--port", "8000",
+  "--proxy-headers",
+  "--forwarded-allow-ips", "*"
+]
