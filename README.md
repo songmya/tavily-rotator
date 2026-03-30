@@ -55,6 +55,6 @@ push 到 `main` 后，GitHub Actions 会自动：
 ---
 
 
-## 客户端配置
+## 客户端配置 cherry studio
 
 <img width="1174" height="791" alt="image" src="https://github.com/user-attachments/assets/74bba731-fcfb-4e4a-b924-f54532ac3c95" />
