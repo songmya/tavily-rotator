@@ -1,7 +1,6 @@
 import os
 from tavily_pool import TavilyPool
 from mcp.server.fastmcp import FastMCP
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
 API_KEYS = os.getenv("TAVILY_KEYS").split(",")
 
@@ -21,6 +20,3 @@ def web_search(query: str) -> str:
 app = mcp.sse_app(
     allowed_hosts=["*"]
 )
-
-# Cloudflare / 内网必须
-app.add_middleware(ProxyHeadersMiddleware)
