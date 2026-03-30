@@ -54,19 +54,6 @@ push 到 `main` 后，GitHub Actions 会自动：
 
 ---
 
-## NAS 部署
-
-进入 `deploy/nas/` 目录：
-
-1. 复制 `.env.example` 为 `.env`
-2. 填写真实配置
-3. 执行：
-
-```bash
-docker compose pull
-docker compose up -d
-
----
 
 ## 客户端配置
 
