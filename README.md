@@ -1,7 +1,7 @@
 # 多账户tavily api token 轮询
 
-tavily搜索每个账户每月有免费1000次搜索，如有多个账号，可利用此项目进行负载均衡，轮询使用各账户的api token
-这是一个适合部署到 NAS 的 Tavily 多 Key 轮询方案，包含两个服务：
+tavily搜索每个账户每月有免费1000次搜索，如有多个账号，可利用此项目进行负载均衡，轮询使用各账户的api token。
+这是一个适合部署到 Docker 的 Tavily 多 Key 轮询方案，包含两个服务：
 
 - `nas-tavily-gateway`：负责多个 Tavily API Key 的轮询、失败切换，并调用 Tavily Search API
 - `nas-tavily-mcp`：提供 MCP Server，对外暴露 `tavily-search` 工具，并把请求转发到 Gateway
