@@ -1,21 +1,22 @@
 services:
   nas-tavily-gateway:
-    image: docker.io/${DOCKERHUB_USERNAME}/nas-tavily-gateway:${GATEWAY_IMAGE_TAG}
+    # Gateway 镜像地址
+    image: docker.io/songmy94/nas-tavily-gateway:latest
     container_name: nas-tavily-gateway
 
     environment:
       # 多个 Tavily API Key，逗号分隔，Gateway 会在这些 key 之间轮询
-      TAVILY_API_KEYS: "key1,key2"
+      - TAVILY_API_KEYS=key1,key2
 
       # MCP -> Gateway 的内部认证令牌
       # nas-tavily-mcp 调用 nas-tavily-gateway 时必须带上这个值
-      APP_API_TOKEN: "random-token"
+      - APP_API_TOKEN=random-token
 
       # Gateway 请求 Tavily 官方 API 的超时时间（秒）
-      REQUEST_TIMEOUT: "30"
+      - REQUEST_TIMEOUT=30
 
-      # 某个 key 失败后进入冷却期的时长（秒）
-      KEY_COOLDOWN_SECONDS: "60"
+      # 某个 Tavily key 请求失败后，进入冷却期的时长（秒）
+      - KEY_COOLDOWN_SECONDS=60
 
     ports:
       # 宿主机 8000 -> 容器 8000
@@ -24,20 +25,21 @@ services:
     restart: unless-stopped
 
   nas-tavily-mcp:
+    # MCP 镜像地址
     image: docker.io/songmy94/nas-tavily-mcp:latest
     container_name: nas-tavily-mcp
 
     environment:
       # MCP 服务在容器内部监听的端口
-      PORT: "9000"
+      - PORT=9000
 
       # MCP 转发请求给 Gateway 时使用的内部地址
-      # 注意：这里写的是容器服务名 + 容器端口，不是宿主机端口
-      GATEWAY_BASE_URL: "http://nas-tavily-gateway:8000"
+      # 注意：这里写的是服务名 + 容器端口，不是宿主机端口
+      - GATEWAY_BASE_URL=http://nas-tavily-gateway:8000
 
-      # MCP -> Gateway 的内部认证令牌，必须和 Gateway 的 APP_API_TOKEN 一致
-      GATEWAY_TOKEN: "random-token"
-
+      # MCP -> Gateway 的内部认证令牌
+      # 必须和 Gateway 的 APP_API_TOKEN 保持一致
+      - GATEWAY_TOKEN=random-token
 
     depends_on:
       - nas-tavily-gateway
