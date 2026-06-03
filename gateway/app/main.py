@@ -88,10 +88,29 @@ class KeyPool:
 key_pool = KeyPool(TAVILY_API_KEYS, KEY_COOLDOWN_SECONDS)
 
 
-def verify_gateway_token(x_api_key: Optional[str]):
-    if APP_API_TOKEN:
-        if not x_api_key or x_api_key != APP_API_TOKEN:
-            raise HTTPException(status_code=401, detail="无效的网关令牌")
+def verify_gateway_token(
+    x_api_key: Optional[str] = None,
+    authorization: Optional[str] = None,
+):
+    """Verify internal gateway token.
+
+    Original project accepted only `X-Api-Key`, which works for its MCP server.
+    OpenClaw's Tavily plugin sends `Authorization: Bearer <apiKey>` to the
+    configured Tavily-compatible base URL, so accept both header styles.
+    """
+    if not APP_API_TOKEN:
+        return
+
+    bearer_token: Optional[str] = None
+    if authorization:
+        scheme, sep, token = authorization.partition(" ")
+        if sep and scheme.lower() == "bearer":
+            bearer_token = token.strip()
+
+    if x_api_key == APP_API_TOKEN or bearer_token == APP_API_TOKEN:
+        return
+
+    raise HTTPException(status_code=401, detail="无效的网关令牌")
 
 
 @app.get("/health")
@@ -100,14 +119,21 @@ async def health():
 
 
 @app.get("/pool-status")
-async def pool_status(x_api_key: Optional[str] = Header(default=None)):
-    verify_gateway_token(x_api_key)
+async def pool_status(
+    x_api_key: Optional[str] = Header(default=None),
+    authorization: Optional[str] = Header(default=None),
+):
+    verify_gateway_token(x_api_key=x_api_key, authorization=authorization)
     return await key_pool.get_status()
 
 
 @app.post("/search")
-async def search(body: TavilySearchRequest, x_api_key: Optional[str] = Header(default=None)):
-    verify_gateway_token(x_api_key)
+async def search(
+    body: TavilySearchRequest,
+    x_api_key: Optional[str] = Header(default=None),
+    authorization: Optional[str] = Header(default=None),
+):
+    verify_gateway_token(x_api_key=x_api_key, authorization=authorization)
 
     payload = body.model_dump(exclude_none=True)
     errors = []
